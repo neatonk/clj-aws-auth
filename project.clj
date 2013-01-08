@@ -1,5 +1,5 @@
 (defproject clj-aws-auth "0.1.0-SNAPSHOT"
-  :description "Clojure Amazon Authentication library."
+  :description "Clojure AWS Authentication library."
   :url "http://github.com/neatonk/cls-aws-auth"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}

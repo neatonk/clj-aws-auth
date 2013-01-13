@@ -1,4 +1,5 @@
 (ns aws.sdk.auth
+  "Create and retreive AWSCredentials using Amazon's auth API"
   (:require [clojure.java.io :as io])
   (:import [com.amazonaws.auth
             AWSCredentials
@@ -46,7 +47,7 @@
 ;; # Credentials Provider
 ;;
 ;; Use `credentials-provider` to create an AWSCredentialsProvider or
-;; an AWSCredentialsProviderChain.
+;; an AWSCredentialsProviderChain from a single source.
 
 (def ^:private keyword->class
   {:classpath ClasspathPropertiesFileCredentialsProvider
@@ -99,7 +100,7 @@
   use. Since this is based on a protocol, you are free to extend it to
   any type you like.
 
-  Supported provider keywords and classes:
+  Default provider keywords and classes:
     :classpath => ClasspathPropertiesFileCredentialsProvider
     :default-chain => DefaultAWSCredentialsProviderChain
     :environment => EnvironmentVariableCredentialsProvider
@@ -110,6 +111,11 @@
   (let [args (when-not (empty? args) args)]
     (make-credentials-provider source args)))
 
+
+;; # Credentials Provider Chain
+;;
+;; Use `credentials-provider-chain` to explicitly create an
+;; AWSCredentialsProviderChain from a multiple of sources.
 
 (defn ^AWSCredentialsProviderChain
   credentials-provider-chain

@@ -16,6 +16,10 @@
             SystemPropertiesCredentialsProvider]))
 
 
+(defn credentials? [x] (isa? (type x) AWSCredentials))
+(defn credentials-provider? [x] (isa? (type x) AWSCredentialsProvider))
+(defn credentials-provider-chain? [x] (isa? (type x) AWSCredentialsProviderChain))
+
 ;; # Credentials
 ;;
 ;; Use `credentials` to create an instance of the BasicAWSCredentials
@@ -23,7 +27,9 @@
 
 (defn ^AWSCredentials
   credentials
-  "Creates basic aws credentials using the provided credentials map.
+  "Creates basic aws credentials using the provided credentials
+  map. Prefer `get-credentials` when credentials need to be loaded at
+  runtime.
 
   Supported keys:
     :access-key     requires :secret-key
@@ -63,18 +69,19 @@
   (make-credentials-provider [p _] p)
 
   AWSCredentials
-  (make-credentials-provider [creds args]
+  (make-credentials-provider [creds _]
     (reify AWSCredentialsProvider
       (getCredentials [_] creds)
       (refresh [_] nil)))
 
-  java.lang.Class
-  (make-credentials-provider [c args]
-    (apply-constructor c args))
+  clojure.lang.PersistentArrayMap
+  (make-credentials-provider [m _]
+    (when-let [creds (credentials m)]
+      (make-credentials-provider creds _)))
 
   clojure.lang.Keyword
   (make-credentials-provider [k args]
-    (make-credentials-provider (keyword->class key) args))
+    (apply-constructor (keyword->class k) args))
 
   clojure.lang.Fn
   (make-credentials-provider [f args]
@@ -86,7 +93,7 @@
 
 (defn ^AWSCredentialsProvider
   credentials-provider
-  "Creates a credentials provider for the sourcegiven. The source can
+  "Creates a credentials provider for the source given. The source can
   be of any type the AWSCredentialsProviderFactory protocol supports,
   but should typically be a keyword indicating the provider type to
   use. Since this is based on a protocol, you are free to extend it to
@@ -103,25 +110,22 @@
   (let [args (when-not (empty? args) args)]
     (make-credentials-provider source args)))
 
-(defn provider-chain? [x] (isa? x AWSCredentialsProviderChain))
 
-;; AWSCredentialsProviderChain's are disallowed because they will
-;; throw an exception if no creds are found, causing the rest of the
-;; chain to be ignored.
-(defn- check-sources! [sources]
-  (when (some provider-chain? sources)
-    (throw (IllegalArgumentException. "AWSCredentialsProviderChain cannot be used as a source"))))
-
-(defn credentials-provider-chain [sources]
-  (check-sources! sources)
+(defn ^AWSCredentialsProviderChain
+  credentials-provider-chain
+  "Creates a credentials provider chain from the sources given. See
+  #'credentials-provider for supported sources."
+  [sources]
   (let [providers (map credentials-provider sources)]
-   (AWSCredentialsProviderChain. (into-array providers))))
+    (AWSCredentialsProviderChain.
+     (into-array AWSCredentialsProvider providers))))
+
 
 (defn ^AWSCredentials
   get-credentials
   "Loads credentials using the default aws credentials provider chain
-  or from the source(s) given in order. Throws an exception if no
-  credentials are found."
+  or from the source(s) given in the order given order. Throws an
+  exception if no credentials are found."
   [& sources]
   (.getCredentials
    (if (empty? sources)

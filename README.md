@@ -81,6 +81,6 @@ Copyright © 2013 Kevin Neaton
 Distributed under the Eclipse Public License, the same as Clojure.
 
 [0]: https://github.com/weavejester/clj-aws-s3
-[1]: https://neatonk.github.com/clj-aws-auth/aws.sdk.auth.html#var-credentials-provider
-[2]: http://neatonk.github.com/clj-aws-auth/aws.sdk.auth.html
+[1]: https://neatonk.github.com/clj-aws-auth/v0.1.0/aws.sdk.auth.html#var-credentials-provider
+[2]: http://neatonk.github.com/clj-aws-auth/v0.1.0/aws.sdk.auth.html
 [3]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/package-summary.html

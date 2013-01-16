@@ -76,7 +76,7 @@ encrypted file, assuming you already have gpg installed and setup.
 
 ## Documentation
 
-* [API docs (coming soon)][2]
+* [API docs][2]
 * [AWS SDK Javadoc for Auth][3]
 
 ## License

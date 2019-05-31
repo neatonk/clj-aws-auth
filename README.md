@@ -1,5 +1,7 @@
 # clj-aws-auth
 
+**NOTICE: This project is no longer active.**
+
 A Clojure library for Amazon's Auth API, based on the official AWS Java
 SDK. Easily create and retrieve AWSCredentials from a multitude of sources.
 
